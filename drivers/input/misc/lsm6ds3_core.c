@@ -291,7 +291,13 @@ static struct sensors_classdev lsm6ds3_step_detector_classdev = {
 static const struct lsm6ds3_sensor_name {
 	const char *name;
 	const char *description;
+/* [PM99] S- BUG#577 Grace_Chang Improve sensorservice start up time */
+#ifdef ORG_VER
 } lsm6ds3_sensor_name[LSM6DS3_SENSORS_NUMB] = {
+#else
+} lsm6ds3_sensor_name[LSM6DS3_SENSORS_NUMB2] = {
+#endif
+/* [PM99] E- BUG#577 Grace_Chang Improve sensorservice start up time */
 	[LSM6DS3_ACCEL] = {
 			.name = "accelerometer",
 			.description = "accelerometer",
