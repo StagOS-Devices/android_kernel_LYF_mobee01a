@@ -400,6 +400,7 @@ static inline s64 lsm6ds3_get_time_ns(void)
 	 * calls getnstimeofday.
 	 * If hrtimers then up to ns accurate, if not microsecond.
 	 */
+	//ktime_get_real_ts(&ts);
 	get_monotonic_boottime(&ts);
 
 	return timespec_to_ns(&ts);
