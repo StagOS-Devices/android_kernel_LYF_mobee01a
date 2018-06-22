@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  */
 
-#include "msm8939-pinctrl.dtsi"
+#include "test01a-msm8939-pinctrl.dtsi"
 
 &blsp1_uart1 {
 	status = "disabled";
@@ -22,6 +22,27 @@
 	pinctrl-0 = <&uart_console_sleep>;
 };
 
+&soc {
+	i2c@78ba000 { /* BLSP1 QUP6 */
+		nfc-nci@e {
+			compatible = "qcom,nfc-nci";
+			reg = <0x0e>;
+			qcom,irq-gpio = <&msm_gpio 21 0x00>;
+			qcom,dis-gpio = <&msm_gpio 20 0x00>;
+			qcom,clk-src = "BBCLK2";
+			qcom,clk-en-gpio = <&msm_gpio 0 0x00>;
+			interrupt-parent = <&msm_gpio>;
+			interrupts = <21 0>;
+			interrupt-names = "nfc_irq";
+			pinctrl-names = "nfc_active","nfc_suspend";
+			pinctrl-0 = <&nfc_int_active &nfc_disable_active>;
+			pinctrl-1 = <&nfc_int_suspend &nfc_disable_suspend>;
+			qcom,clk-gpio = <&pm8916_gpios 2 0>;
+			clocks = <&clock_rpm clk_bb_clk2_pin>;
+			clock-names = "ref_clk";
+		};
+	};
+};
 
 &spmi_bus {
 	qcom,pm8916@1 {
@@ -91,6 +112,15 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
+
+		switch_lid {
+			label = "switch_lid";
+			gpios = <&msm_gpio 9 0x1>;
+			linux,input-type = <5>; /* EV_SW */
+			linux,code = <0>; /* SW_LID */
+			debounce-interval = <1>;
+			gpio-key,wakeup;
+		};
 	};
 };
 
@@ -134,9 +164,9 @@
 	interrupt-map-mask = <0xffffffff>;
 	interrupt-map = <0 &intc 0 125 0
 			1 &intc 0 221 0
-			2 &msm_gpio 38 0>;
+			2 &msm_gpio 108 0>;
 	interrupt-names = "hc_irq", "pwr_irq", "status_irq";
-	cd-gpios = <&msm_gpio 38 0x0>;
+	cd-gpios = <&msm_gpio 108 0x0>;
 
 	status = "ok";
 };
@@ -170,4 +200,9 @@
 	qcom,cpr-step-quotient = <26>;
 	qcom,cpr-apc-volt-step = <12500>;
 	qcom,cpr-up-threshold = <2>;
+};
+//enable 5G
+&wcnss_wlan {
+	qcom,has-48mhz-xo;
+	qcom,chip_name = "wcn3660B";
 };
